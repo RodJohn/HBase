@@ -3,7 +3,7 @@
 
 新增
 
-    在列簇中插入数据:格式：put 表名，行键id，列簇名：列名，值
+    在列簇中插入数据:格式：put 表名，row key，列簇名：列名，值
     put 'member','xiaoming','address:contry','china'
     
 修改

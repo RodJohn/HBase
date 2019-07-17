@@ -22,15 +22,15 @@ import org.junit.Test;
 
 public class HBaseDemo {
 
-	//±íµÄ¹ÜÀíÀà
+	//è¡¨çš„ç®¡ç†ç±»
 	HBaseAdmin admin = null;
-	//Êı¾İµÄ¹ÜÀíÀà
+	//æ•°æ®çš„ç®¡ç†ç±»
 	HTable table = null;
-	//±íÃû
+	//è¡¨å
 	String tm = "phone";
 	
 	/**
-	 * Íê³É³õÊ¼»¯¹¦ÄÜ
+	 * å®Œæˆåˆå§‹åŒ–åŠŸèƒ½
 	 * @throws Exception
 	 */
 	@Before
@@ -42,14 +42,14 @@ public class HBaseDemo {
 	}
 	
 	/**
-	 * ´´½¨±í
+	 * åˆ›å»ºè¡¨
 	 * @throws Exception
 	 */
 	@Test
 	public void createTable() throws Exception{
-		//±íµÄÃèÊöÀà
+		//è¡¨çš„æè¿°ç±»
 		HTableDescriptor desc = new HTableDescriptor(TableName.valueOf(tm));
-		//ÁĞ×åµÄÃèÊöÀà
+		//åˆ—æ—çš„æè¿°ç±»
 		HColumnDescriptor family = new HColumnDescriptor("cf".getBytes());
 		desc.addFamily(family);
 		if(admin.tableExists(tm)){
@@ -70,7 +70,7 @@ public class HBaseDemo {
 	@Test
 	public void get() throws Exception{
 		Get get = new Get("1111".getBytes());
-		//Ìí¼ÓÒª»ñÈ¡µÄÁĞºÍÁĞ×å£¬¼õÉÙÍøÂçµÄio£¬Ïàµ±ÓÚÔÚ·şÎñÆ÷¶Ë×öÁË¹ıÂË
+		//æ·»åŠ è¦è·å–çš„åˆ—å’Œåˆ—æ—ï¼Œå‡å°‘ç½‘ç»œçš„ioï¼Œç›¸å½“äºåœ¨æœåŠ¡å™¨ç«¯åšäº†è¿‡æ»¤
 		get.addColumn("cf".getBytes(), "name".getBytes());
 		get.addColumn("cf".getBytes(), "age".getBytes());
 		get.addColumn("cf".getBytes(), "sex".getBytes());
@@ -97,6 +97,33 @@ public class HBaseDemo {
 			System.out.println(Bytes.toString(CellUtil.cloneValue(cell2)));
 			System.out.println(Bytes.toString(CellUtil.cloneValue(cell3)));
 		}
+	}
+
+
+
+	@Test
+	public void scan2() throws Exception {
+		FilterList filters = new FilterList(FilterList.Operator.MUST_PASS_ALL);
+		SingleColumnValueFilter filter1 = new SingleColumnValueFilter("cf".getBytes(), "type".getBytes(),
+				CompareOp.EQUAL, "0".getBytes());
+		PrefixFilter filter2 = new PrefixFilter("15895223166".getBytes());
+		filters.addFilter(filter1);
+		filters.addFilter(filter2);
+
+		Scan scan = new Scan();
+		scan.setFilter(filters);
+		ResultScanner scanner = table.getScanner(scan);
+		for (Result result : scanner) {
+			System.out.print(Bytes
+					.toString(CellUtil.cloneValue(result.getColumnLatestCell("cf".getBytes(), "dnum".getBytes()))));
+			System.out.print("--" + Bytes
+					.toString(CellUtil.cloneValue(result.getColumnLatestCell("cf".getBytes(), "type".getBytes()))));
+			System.out.print("--" + Bytes
+					.toString(CellUtil.cloneValue(result.getColumnLatestCell("cf".getBytes(), "date".getBytes()))));
+			System.out.println("--" + Bytes
+					.toString(CellUtil.cloneValue(result.getColumnLatestCell("cf".getBytes(), "length".getBytes()))));
+		}
+		scanner.close();
 	}
 	
 	@After

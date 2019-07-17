@@ -1,8 +1,27 @@
 
 # 概述
 
-    表结构包括表和列族
+    表结构包括命名空间、表、列族
+
+# 命名空间
+
+命名空间
+
+    命名空间相当于库
+    默认的命名空间就是default
+
+新建
+
+     create_namespace 'ns1'
+     
+列出所有命名空间
+
+    list_namespace
     
+删除
+
+    drop_namespace 'ns1'   
+        
 # 表
 
 创建
@@ -23,7 +42,6 @@
     删除一个表：先关闭，再删除
     
     disable 'member'
-    
     drop 'member'
     
 
@@ -34,11 +52,10 @@
     
 # 列族    
 
-    5、删除一个列簇：先关闭，再更新，再打开
+    删除一个列簇：
+    先关闭表，再更新列族，再打开表
     
     disable 'member'
-    
     alter'member',NAME=>'member_id',METHOD=>'delete'
-    
     enable 'member'
     
